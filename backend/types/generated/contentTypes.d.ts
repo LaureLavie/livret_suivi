@@ -430,6 +430,166 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBilanSuiviBilanSuivi extends Struct.CollectionTypeSchema {
+  collectionName: 'bilan-suivis';
+  info: {
+    description: '\u00C9valuations de suivi (n\u00B01, n\u00B02, n\u00B03...)';
+    displayName: 'Bilan de suivi interm\u00E9diaire';
+    pluralName: 'bilan-suivis';
+    singularName: 'bilan-suivi';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date & Schema.Attribute.Required;
+    difficultes: Schema.Attribute.RichText;
+    livret: Schema.Attribute.Relation<'manyToOne', 'api::livret.livret'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::bilan-suivi.bilan-suivi'
+    > &
+      Schema.Attribute.Private;
+    missionsRealisees: Schema.Attribute.RichText;
+    numero: Schema.Attribute.Integer & Schema.Attribute.Required;
+    objectifsSuivants: Schema.Attribute.RichText;
+    pointsPositifs: Schema.Attribute.RichText;
+    publishedAt: Schema.Attribute.DateTime;
+    signatureApprenti: Schema.Attribute.Media<'images'>;
+    signatureReferent: Schema.Attribute.Media<'images'>;
+    signatureTuteur: Schema.Attribute.Media<'images'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiEtudiantEtudiant extends Struct.CollectionTypeSchema {
+  collectionName: 'etudiants';
+  info: {
+    description: 'Apprentis / \u00C9tudiants en alternance';
+    displayName: '\u00C9tudiant';
+    pluralName: 'etudiants';
+    singularName: 'etudiant';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    adresse: Schema.Attribute.Text;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    formation: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::formation.formation'
+    >;
+    livret: Schema.Attribute.Relation<'oneToOne', 'api::livret.livret'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::etudiant.etudiant'
+    > &
+      Schema.Attribute.Private;
+    nom: Schema.Attribute.String & Schema.Attribute.Required;
+    prenom: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    telephone: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiFormationFormation extends Struct.CollectionTypeSchema {
+  collectionName: 'formations';
+  info: {
+    description: 'Formations propos\u00E9es (ex: BTS, Licence, etc.)';
+    displayName: 'Formation';
+    pluralName: 'formations';
+    singularName: 'formation';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    annee: Schema.Attribute.String & Schema.Attribute.Required;
+    blocsCompetences: Schema.Attribute.Component<
+      'livret.bloc-competence',
+      true
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    etudiants: Schema.Attribute.Relation<'oneToMany', 'api::etudiant.etudiant'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::formation.formation'
+    > &
+      Schema.Attribute.Private;
+    nom: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    rncp: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiLivretLivret extends Struct.CollectionTypeSchema {
+  collectionName: 'livrets';
+  info: {
+    description: 'Livret nominatif par \u00E9tudiant';
+    displayName: 'Livret de suivi \u00E9tudiant';
+    pluralName: 'livrets';
+    singularName: 'livret';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    bilanFinal: Schema.Attribute.Component<'livret.bilan-final', false>;
+    bilansIntermediaires: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::bilan-suivi.bilan-suivi'
+    >;
+    cahierLiaison: Schema.Attribute.RichText;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    entreprise: Schema.Attribute.Component<'livret.infos-entreprise', false>;
+    etudiant: Schema.Attribute.Relation<'oneToOne', 'api::etudiant.etudiant'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::livret.livret'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    statut: Schema.Attribute.Enumeration<
+      ['brouillon', 'envoye-tuteur', 'en-cours', 'termine']
+    > &
+      Schema.Attribute.DefaultTo<'brouillon'>;
+    suiviCompetences: Schema.Attribute.DynamicZone<
+      ['livret.bloc-competence-suivi']
+    >;
+    tokenAcces: Schema.Attribute.UID &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -941,6 +1101,10 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::bilan-suivi.bilan-suivi': ApiBilanSuiviBilanSuivi;
+      'api::etudiant.etudiant': ApiEtudiantEtudiant;
+      'api::formation.formation': ApiFormationFormation;
+      'api::livret.livret': ApiLivretLivret;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
